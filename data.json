@@ -1,0 +1,49 @@
+{
+  "profile": {
+    "name": "Alex Creator",
+    "description": "Digital Artist & Developer. Creating immersive web experiences.",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80"
+  },
+  "links": [
+    {
+      "title": "My Portfolio",
+      "url": "#",
+      "icon": "fa-solid fa-briefcase"
+    },
+    {
+      "title": "Latest Project",
+      "url": "#",
+      "icon": "fa-solid fa-star"
+    },
+    {
+      "title": "YouTube Channel",
+      "url": "#",
+      "icon": "fa-brands fa-youtube"
+    },
+    {
+      "title": "Contact Me",
+      "url": "mailto:email@example.com",
+      "icon": "fa-solid fa-envelope"
+    }
+  ],
+  "socials": [
+    {
+      "platform": "instagram",
+      "url": "#",
+      "icon": "fa-brands fa-instagram"
+    },
+    {
+      "platform": "twitter",
+      "url": "#",
+      "icon": "fa-brands fa-twitter"
+    },
+    {
+      "platform": "github",
+      "url": "#",
+      "icon": "fa-brands fa-github"
+    }
+  ],
+  "theme": {
+    "accentColor": "#6366f1"
+  }
+}
