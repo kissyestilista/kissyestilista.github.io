@@ -1,9 +1,15 @@
 {
   "profile": {
-    "name": "Alex Creator",
-    "description": "Digital Artist & Developer. Creating immersive web experiences.",
-    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80"
+    "name": "Kissy Estilista",
+    "description": "Estilista con 20 años de experiencia ",
+    "avatar": "./public/logo.png"
   },
+  "gallery": [
+    "https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1595475207225-428b62bda831?auto=format&fit=crop&w=800&q=80"
+  ],
   "links": [
     {
       "title": "My Portfolio",
@@ -33,17 +39,17 @@
       "icon": "fa-brands fa-instagram"
     },
     {
-      "platform": "twitter",
-      "url": "#",
-      "icon": "fa-brands fa-twitter"
+      "platform": "whatsapp",
+      "url": "https://wa.me/+56983158986",
+      "icon": "fa-brands fa-whatsapp"
     },
     {
-      "platform": "github",
-      "url": "#",
-      "icon": "fa-brands fa-github"
+      "platform": "maps",
+      "url": "https://maps.app.goo.gl/reKik5EtpzAprSFPA",
+      "icon": "fa-solid fa-map-marker-alt"
     }
   ],
   "theme": {
-    "accentColor": "#6366f1"
+    "accentColor": "#2d4a2d"
   }
 }
