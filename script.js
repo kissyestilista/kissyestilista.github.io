@@ -10,7 +10,12 @@ async function fetchData() {
         }
         const data = await response.json();
         renderProfile(data.profile);
-        renderLinks(data.links);
+        if (data.experience) {
+            renderExperience(data.experience);
+        }
+        if (data.location) {
+            renderLocation(data.location);
+        }
         if (data.gallery) {
             renderGallery(data.gallery);
         }
@@ -71,56 +76,85 @@ function renderLinks(links) {
 
 function renderGallery(images) {
     const container = document.getElementById('gallery-container');
-    container.innerHTML = '';
+    container.innerHTML = ''; // Clear existing
+
+    // 1. Create Wrapper
+    const wrapper = document.createElement('div');
+    wrapper.className = 'gallery-slider-wrapper';
+
+    // 2. Create Slider
+    const slider = document.createElement('div');
+    slider.className = 'gallery-slider';
 
     images.forEach(imgUrl => {
-        const div = document.createElement('div');
-        div.className = 'gallery-item';
-        div.innerHTML = `<img src="${imgUrl}" alt="Gallery Image" loading="lazy">`;
-        container.appendChild(div);
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        item.innerHTML = `<img src="${imgUrl}" alt="Gallery Image" loading="lazy">`;
+        slider.appendChild(item);
     });
 
-    // Auto-scroll logic
-    let scrollAmount = 0;
-    const scrollStep = 1; // Speed
-    const delay = 30; // 30ms
+    wrapper.appendChild(slider);
 
-    let scrollInterval = setInterval(() => {
-        if (container.scrollWidth - container.clientWidth <= container.scrollLeft + 1) {
-            // Reset to start for infinite feel (simplistic approach)
-            // Or bounce back? Let's just reset or stop. 
-            // Ideally for carousel "infinite" we need cloned nodes, but simplistic auto-scroll usually just scrolls.
-            // Let's make it bounce or reset. Resetting might be jarring.
-            // Let's toggle direction or just reset smoothly.
-            // Simple: Loop back to 0
-            container.scrollTo({ left: 0, behavior: 'smooth' });
-        } else {
-            container.scrollLeft += scrollStep;
-        }
-    }, delay);
+    // 3. Create Arrows
+    const leftArrow = document.createElement('div');
+    leftArrow.className = 'gallery-arrow gallery-arrow-left';
+    leftArrow.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
 
-    // Better Auto-scroll: Slide one item at a time every few seconds
-    clearInterval(scrollInterval); // Clear the smooth one above, let's do a snap-based one
+    const rightArrow = document.createElement('div');
+    rightArrow.className = 'gallery-arrow gallery-arrow-right';
+    rightArrow.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
 
-    let autoScroll = setInterval(() => {
-        if (container.matches(':hover')) return; // Pause on hover (desktop)
+    container.appendChild(leftArrow);
+    container.appendChild(wrapper);
+    container.appendChild(rightArrow);
 
-        const itemWidth = container.querySelector('.gallery-item').offsetWidth;
-        const gap = 16; // 1rem
+    // 4. Slider Logic
+    let currentIndex = 0;
+    const totalSlides = images.length;
 
-        const maxScroll = container.scrollWidth - container.clientWidth;
+    function updateSlider() {
+        slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+    }
 
-        if (container.scrollLeft >= maxScroll - 10) {
-            container.scrollTo({ left: 0, behavior: 'smooth' });
-        } else {
-            container.scrollBy({ left: itemWidth + gap, behavior: 'smooth' });
-        }
-    }, 3000); // 3 seconds
+    function nextSlide() {
+        currentIndex = (currentIndex + 1) % totalSlides;
+        updateSlider();
+    }
 
-    // Pause on interaction
-    container.addEventListener('touchstart', () => clearInterval(autoScroll));
-    // container.addEventListener('touchend', () => ... restart?); // simpler to just stop auto-scroll on interaction
+    function prevSlide() {
+        currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+        updateSlider();
+    }
+
+    rightArrow.addEventListener('click', () => {
+        nextSlide();
+        resetAutoScroll();
+    });
+
+    leftArrow.addEventListener('click', () => {
+        prevSlide();
+        resetAutoScroll();
+    });
+
+    // Auto-scroll
+    let autoScrollInterval = setInterval(nextSlide, 5000);
+
+    function resetAutoScroll() {
+        clearInterval(autoScrollInterval);
+        autoScrollInterval = setInterval(nextSlide, 5000);
+    }
+
+    // Touch Support
+    let startX = 0;
+    wrapper.addEventListener('touchstart', e => startX = e.touches[0].clientX);
+    wrapper.addEventListener('touchend', e => {
+        const endX = e.changedTouches[0].clientX;
+        if (startX - endX > 50) nextSlide();
+        else if (endX - startX > 50) prevSlide();
+        resetAutoScroll();
+    });
 }
+
 
 function renderSocials(socials) {
     const container = document.getElementById('socials-container');
@@ -155,3 +189,209 @@ function applyTheme(theme) {
         root.style.setProperty('--text-color', theme.textColor);
     }
 }
+
+function renderExperience(experience) {
+    const container = document.getElementById('experience-container');
+    container.innerHTML = ''; // Clear existing
+
+    // 1. Header (Collapsible toggle)
+    const header = document.createElement('div');
+    header.className = 'experience-header';
+    header.innerHTML = `
+        <h2>EXPERIENCIA</h2>
+        <i class="fa-solid fa-chevron-down"></i>
+    `;
+
+    // 2. Content Wrapper (starts hidden)
+    const content = document.createElement('div');
+    content.className = 'experience-content';
+
+    // Description
+    const bioText = document.createElement('p');
+    bioText.className = 'experience-description';
+    bioText.textContent = experience.description;
+    content.appendChild(bioText);
+
+    // Highlights Bento Grid
+    if (experience.highlights) {
+        const bentoGrid = document.createElement('div');
+        bentoGrid.className = 'experience-bento-grid';
+
+        experience.highlights.forEach((h, index) => {
+            const item = document.createElement('div');
+            item.className = `bento-item bento-item-${index + 1}`;
+            item.innerHTML = `
+                <img src="${h.image}" alt="Highlight" loading="lazy">
+                <div class="bento-overlay">
+                    <span class="highlight-text">${h.description}</span>
+                </div>
+            `;
+
+            // Bento Expansion Logic
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (item.classList.contains('expanded')) {
+                    item.classList.remove('expanded');
+                    bentoGrid.classList.remove('has-expanded');
+                } else {
+                    const expanded = bentoGrid.querySelector('.bento-item.expanded');
+                    if (expanded) expanded.classList.remove('expanded');
+                    item.classList.add('expanded');
+                    bentoGrid.classList.add('has-expanded');
+                }
+            });
+
+            bentoGrid.appendChild(item);
+        });
+        content.appendChild(bentoGrid);
+    }
+
+    // Certificates Subsection Header
+    const subTitle = document.createElement('h3');
+    subTitle.className = 'experience-subtitle';
+    subTitle.textContent = 'Certificaciones y Títulos';
+    content.appendChild(subTitle);
+
+    // Diplomas Carousel
+    const carouselContainer = document.createElement('div');
+    carouselContainer.className = 'diplomas-carousel-container';
+
+    const track = document.createElement('div');
+    track.className = 'diplomas-carousel-track';
+
+    // Helper to create a diploma card
+    const createCard = (diploma) => {
+        const card = document.createElement('div');
+        card.className = 'diploma-card';
+        card.innerHTML = `<img src="${diploma.image}" alt="${diploma.title}" loading="lazy">`;
+
+        card.addEventListener('click', () => {
+            track.classList.add('paused');
+            showDiplomaModal(diploma, () => {
+                track.classList.remove('paused');
+            });
+        });
+        return card;
+    };
+
+    // Render original items
+    experience.diplomas.forEach(diploma => {
+        track.appendChild(createCard(diploma));
+    });
+
+    // Duplicate for infinite effect (at least twice)
+    experience.diplomas.forEach(diploma => {
+        track.appendChild(createCard(diploma));
+    });
+
+    carouselContainer.appendChild(track);
+    content.appendChild(carouselContainer);
+
+    // Modal Global Container (if not exists)
+    if (!document.getElementById('diploma-modal')) {
+        const modal = document.createElement('div');
+        modal.id = 'diploma-modal';
+        modal.innerHTML = `
+            <div class="modal-content-wrapper">
+                <span class="close-modal">&times;</span>
+                <img id="modal-img" src="" alt="Diploma">
+                <div class="modal-info">
+                    <div id="modal-title" class="modal-title"></div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        modal.querySelector('.close-modal').addEventListener('click', () => {
+            modal.classList.remove('active');
+            if (modal.onClose) modal.onClose();
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+                if (modal.onClose) modal.onClose();
+            }
+        });
+    }
+
+    function showDiplomaModal(diploma, onClose) {
+        const modal = document.getElementById('diploma-modal');
+        const img = document.getElementById('modal-img');
+        const title = document.getElementById('modal-title');
+
+        img.src = diploma.image;
+        title.textContent = diploma.description;
+
+        modal.onClose = onClose;
+        modal.classList.add('active');
+    }
+    container.appendChild(header);
+    container.appendChild(content);
+
+    // Toggle Logic
+    header.addEventListener('click', () => {
+        container.classList.toggle('active');
+    });
+}
+
+function renderLocation(location) {
+    const container = document.getElementById('location-container');
+    container.innerHTML = ''; // Clear existing
+
+    // 1. Header and Maps Link
+    const sectionTitle = document.createElement('h2');
+    sectionTitle.textContent = 'UBICACIÓN';
+    container.appendChild(sectionTitle);
+
+    const mapsA = document.createElement('a');
+    mapsA.href = location.maps_url;
+    mapsA.className = 'maps-button';
+    mapsA.target = '_blank';
+    mapsA.rel = 'noopener noreferrer';
+    mapsA.innerHTML = '<i class="fa-solid fa-location-dot"></i> Ver en Google Maps';
+    container.appendChild(mapsA);
+
+    // 2. Slider Container
+    const sliderContainer = document.createElement('div');
+    sliderContainer.className = 'location-slider-container';
+
+    const slider = document.createElement('div');
+    slider.className = 'location-slider';
+
+    // To make it feel "infinite" easily, we'll double the items
+    const doubleImages = [...location.images, ...location.images];
+
+    doubleImages.forEach((imgUrl, index) => {
+        const card = document.createElement('div');
+        card.className = 'location-card';
+        card.innerHTML = `<img src="${imgUrl}" alt="Local ${index + 1}" loading="lazy">`;
+        slider.appendChild(card);
+    });
+
+    sliderContainer.appendChild(slider);
+    container.appendChild(sliderContainer);
+
+    // Infinite Auto-scroll logic (similar to gallery but simpler loop)
+    let isAutoScrolling = true;
+    const scrollInterval = setInterval(() => {
+        if (!isAutoScrolling) return;
+
+        const cardElement = slider.querySelector('.location-card');
+        if (!cardElement) return;
+
+        const cardWidth = cardElement.offsetWidth + 24; // width + gap
+        const maxScroll = slider.scrollWidth / 2;
+
+        if (slider.scrollLeft >= maxScroll - 10) {
+            slider.scrollLeft = 0; // Instant jump back to start
+        } else {
+            slider.scrollBy({ left: cardWidth, behavior: 'smooth' });
+        }
+    }, 3000);
+
+    // Pause on interaction
+    slider.addEventListener('mousedown', () => isAutoScrolling = false);
+    slider.addEventListener('touchstart', () => isAutoScrolling = false);
+}
+

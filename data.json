@@ -5,33 +5,87 @@
     "avatar": "./public/logo.png"
   },
   "gallery": [
-    "https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1595475207225-428b62bda831?auto=format&fit=crop&w=800&q=80"
+    "./public/hair/1.jpeg",
+    "./public/hair/2.jpeg",
+    "./public/hair/3.jpeg",
+    "./public/hair/4.jpeg"
   ],
-  "links": [
-    {
-      "title": "My Portfolio",
-      "url": "#",
-      "icon": "fa-solid fa-briefcase"
-    },
-    {
-      "title": "Latest Project",
-      "url": "#",
-      "icon": "fa-solid fa-star"
-    },
-    {
-      "title": "YouTube Channel",
-      "url": "#",
-      "icon": "fa-brands fa-youtube"
-    },
-    {
-      "title": "Contact Me",
-      "url": "mailto:email@example.com",
-      "icon": "fa-solid fa-envelope"
-    }
-  ],
+  "experience": {
+    "description": "Estilista profesional con más de 15 años de trayectoria trabajando en PALUMBO, especializada en colorimetría avanzada y tendencias internacionales. Mi compromiso es resaltar la belleza natural de cada cliente con técnicas innovadoras y productos de alta calidad.",
+    "highlights": [
+      {
+        "image": "./public/hair/1.jpeg",
+        "description": "20+ Años de Trayectoria Professional"
+      },
+      {
+        "image": "./public/hair/2.jpeg",
+        "description": "Especialista en Colorimetría Avanzada"
+      },
+      {
+        "image": "./public/hair/3.jpeg",
+        "description": "Tendencias en Corte y Estilo"
+      }
+    ],
+    "diplomas": [
+      {
+        "image": "./public/certificate/mariomezza.jpg",
+        "description": "Título Profesional Estilista Unisex - Instituto Mario Mezza"
+      },
+      {
+        "image": "./public/certificate/bip1.jpg",
+        "description": "Licencia Estilista Unisex con Mención en Químicos - BIP Hair Institute"
+      },
+      {
+        "image": "./public/certificate/bip4.jpg",
+        "description": "Certificado de Formación Técnico Capilar - BIP Hair Institute"
+      },
+      {
+        "image": "./public/certificate/palumbo 2.jpg",
+        "description": "Especialización #COLORCORRECTION - Palumbo & L'Oréal Professionnel"
+      },
+      {
+        "image": "./public/certificate/palumbo.jpg",
+        "description": "Seminario Exceptional Color - Palumbo Professional Beauty Institute"
+      },
+      {
+        "image": "./public/certificate/prime.jpg",
+        "description": "Loiras do Impacto: Técnicas Brasileñas - Prime Pro Extreme"
+      },
+      {
+        "image": "./public/certificate/medavita.jpg",
+        "description": "Certificación Experto en Coloración Medavita - BeautyColor"
+      },
+      {
+        "image": "./public/certificate/aplpharpar.jpg",
+        "description": "Taller High Visibility - Alfaparf Milano"
+      },
+      {
+        "image": "./public/certificate/bip2.jpg",
+        "description": "Programa de Perfeccionamiento UPGRADE - BIP Hair Institute"
+      },
+      {
+        "image": "./public/certificate/integralbeauty 4.jpg",
+        "description": "Título Profesional en Manicure y Pedicure Integral"
+      },
+      {
+        "image": "./public/certificate/integralbeauty 1.jpg",
+        "description": "Especialidad en Depilación en Cera Caliente y Roll on"
+      },
+      {
+        "image": "./public/certificate/integralbeauty 2.jpg",
+        "description": "Especialidad en Tinte y Ondulación de Pestañas"
+      }
+    ]
+  },
+  "location": {
+    "maps_url": "https://maps.app.goo.gl/reKik5EtpzAprSFPA",
+    "images": [
+      "./public/location/1.jpeg",
+      "./public/location/2.jpeg",
+      "./public/location/3.jpeg",
+      "./public/location/4.jpeg"
+    ]
+  },
   "socials": [
     {
       "platform": "instagram",
@@ -40,12 +94,12 @@
     },
     {
       "platform": "whatsapp",
-      "url": "https://wa.me/56983158986",
+      "url": "https://wa.me/56989158986",
       "icon": "fa-brands fa-whatsapp"
     },
     {
       "platform": "maps",
-      "url": "https://maps.app.goo.gl/reKik5EtpzAprSFPA",
+      "url": "#location-container",
       "icon": "fa-solid fa-map-marker-alt"
     }
   ],
