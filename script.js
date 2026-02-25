@@ -20,6 +20,7 @@ async function fetchData() {
             renderGallery(data.gallery);
         }
         renderSocials(data.socials);
+        initModal();
         if (data.theme) {
             applyTheme(data.theme);
         }
@@ -44,39 +45,17 @@ function renderProfile(profile) {
     }
 }
 
-function renderLinks(links) {
-    const container = document.getElementById('links-container');
-    container.innerHTML = ''; // Clear existing
-
-    links.forEach((link, index) => {
-        const a = document.createElement('a');
-        a.href = link.url;
-        a.className = 'link-card';
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-
-        // Stagger animation
-        a.style.animationDelay = `${index * 100}ms`;
-
-        const iconHtml = link.icon ? `<i class="${link.icon} link-icon"></i>` : '';
-
-        a.innerHTML = `
-            <div class="link-content">
-                ${iconHtml}
-                <span class="link-title">${link.title}</span>
-            </div>
-            <i class="fa-solid fa-chevron-right link-arrow"></i>
-        `;
-
-        container.appendChild(a);
-    });
-}
-
 
 
 function renderGallery(images) {
     const container = document.getElementById('gallery-container');
     container.innerHTML = ''; // Clear existing
+
+    // 0. Add Title
+    const title = document.createElement('h2');
+    title.textContent = 'TRABAJOS RECIENTES';
+    title.className = 'section-title';
+    container.appendChild(title);
 
     // 1. Create Wrapper
     const wrapper = document.createElement('div');
@@ -86,13 +65,23 @@ function renderGallery(images) {
     const slider = document.createElement('div');
     slider.className = 'gallery-slider';
 
-    images.forEach(imgUrl => {
+    const fragment = document.createDocumentFragment();
+
+    images.forEach((imgUrl, index) => {
         const item = document.createElement('div');
         item.className = 'gallery-item';
+        item.style.cursor = 'pointer';
+        item.style.animationDelay = `${index * 150}ms`;
         item.innerHTML = `<img src="${imgUrl}" alt="Gallery Image" loading="lazy">`;
-        slider.appendChild(item);
+
+        item.addEventListener('click', () => {
+            showImageModal({ image: imgUrl, description: '' });
+        });
+
+        fragment.appendChild(item);
     });
 
+    slider.appendChild(fragment);
     wrapper.appendChild(slider);
 
     // 3. Create Arrows
@@ -160,6 +149,8 @@ function renderSocials(socials) {
     const container = document.getElementById('socials-container');
     container.innerHTML = '';
 
+    const fragment = document.createDocumentFragment();
+
     socials.forEach(social => {
         const a = document.createElement('a');
         a.href = social.url;
@@ -173,8 +164,10 @@ function renderSocials(socials) {
             a.innerHTML = `<i class="${social.icon}"></i>`;
         }
 
-        container.appendChild(a);
+        fragment.appendChild(a);
     });
+
+    container.appendChild(fragment);
 }
 
 function applyTheme(theme) {
@@ -216,6 +209,7 @@ function renderExperience(experience) {
     if (experience.highlights) {
         const bentoGrid = document.createElement('div');
         bentoGrid.className = 'experience-bento-grid';
+        const bentoFragment = document.createDocumentFragment();
 
         experience.highlights.forEach((h, index) => {
             const item = document.createElement('div');
@@ -227,22 +221,15 @@ function renderExperience(experience) {
                 </div>
             `;
 
-            // Bento Expansion Logic
+            // Modal Interaction Logic
             item.addEventListener('click', (e) => {
                 e.stopPropagation();
-                if (item.classList.contains('expanded')) {
-                    item.classList.remove('expanded');
-                    bentoGrid.classList.remove('has-expanded');
-                } else {
-                    const expanded = bentoGrid.querySelector('.bento-item.expanded');
-                    if (expanded) expanded.classList.remove('expanded');
-                    item.classList.add('expanded');
-                    bentoGrid.classList.add('has-expanded');
-                }
+                showImageModal(h);
             });
 
-            bentoGrid.appendChild(item);
+            bentoFragment.appendChild(item);
         });
+        bentoGrid.appendChild(bentoFragment);
         content.appendChild(bentoGrid);
     }
 
@@ -267,34 +254,43 @@ function renderExperience(experience) {
 
         card.addEventListener('click', () => {
             track.classList.add('paused');
-            showDiplomaModal(diploma, () => {
+            showImageModal(diploma, () => {
                 track.classList.remove('paused');
             });
         });
         return card;
     };
 
-    // Render original items
+    // Render original items and duplicate
+    const trackFragment = document.createDocumentFragment();
     experience.diplomas.forEach(diploma => {
-        track.appendChild(createCard(diploma));
+        trackFragment.appendChild(createCard(diploma));
     });
-
-    // Duplicate for infinite effect (at least twice)
     experience.diplomas.forEach(diploma => {
-        track.appendChild(createCard(diploma));
+        trackFragment.appendChild(createCard(diploma));
     });
+    track.appendChild(trackFragment);
 
     carouselContainer.appendChild(track);
     content.appendChild(carouselContainer);
 
-    // Modal Global Container (if not exists)
+    container.appendChild(header);
+    container.appendChild(content);
+
+    // Toggle Logic
+    header.addEventListener('click', () => {
+        container.classList.toggle('active');
+    });
+}
+
+function initModal() {
     if (!document.getElementById('diploma-modal')) {
         const modal = document.createElement('div');
         modal.id = 'diploma-modal';
         modal.innerHTML = `
             <div class="modal-content-wrapper">
                 <span class="close-modal">&times;</span>
-                <img id="modal-img" src="" alt="Diploma">
+                <img id="modal-img" src="" alt="Modal Image">
                 <div class="modal-info">
                     <div id="modal-title" class="modal-title"></div>
                 </div>
@@ -314,25 +310,27 @@ function renderExperience(experience) {
             }
         });
     }
+}
 
-    function showDiplomaModal(diploma, onClose) {
-        const modal = document.getElementById('diploma-modal');
-        const img = document.getElementById('modal-img');
-        const title = document.getElementById('modal-title');
+function showImageModal(data, onClose) {
+    const modal = document.getElementById('diploma-modal');
+    if (!modal) return;
 
-        img.src = diploma.image;
-        title.textContent = diploma.description;
+    const img = document.getElementById('modal-img');
+    const title = document.getElementById('modal-title');
 
-        modal.onClose = onClose;
-        modal.classList.add('active');
+    img.src = data.image;
+    title.textContent = data.description || '';
+
+    // Hide title if no description
+    if (!data.description) {
+        title.style.display = 'none';
+    } else {
+        title.style.display = 'block';
     }
-    container.appendChild(header);
-    container.appendChild(content);
 
-    // Toggle Logic
-    header.addEventListener('click', () => {
-        container.classList.toggle('active');
-    });
+    modal.onClose = onClose;
+    modal.classList.add('active');
 }
 
 function renderLocation(location) {
@@ -361,37 +359,75 @@ function renderLocation(location) {
 
     // To make it feel "infinite" easily, we'll double the items
     const doubleImages = [...location.images, ...location.images];
+    const locationFragment = document.createDocumentFragment();
 
     doubleImages.forEach((imgUrl, index) => {
         const card = document.createElement('div');
         card.className = 'location-card';
+        card.style.cursor = 'pointer';
+        card.style.animationDelay = `${index * 100}ms`; // Stagger effect
         card.innerHTML = `<img src="${imgUrl}" alt="Local ${index + 1}" loading="lazy">`;
-        slider.appendChild(card);
+
+        card.addEventListener('click', () => {
+            showImageModal({ image: imgUrl, description: '' });
+        });
+
+        locationFragment.appendChild(card);
     });
 
+    slider.appendChild(locationFragment);
     sliderContainer.appendChild(slider);
     container.appendChild(sliderContainer);
 
-    // Infinite Auto-scroll logic (similar to gallery but simpler loop)
-    let isAutoScrolling = true;
-    const scrollInterval = setInterval(() => {
-        if (!isAutoScrolling) return;
+    // 4. Slider Logic
+    let currentIndex = 0;
+    const totalSlides = location.images.length;
 
-        const cardElement = slider.querySelector('.location-card');
-        if (!cardElement) return;
+    const updateSlider = () => {
+        const card = slider.querySelector('.location-card');
+        if (!card) return;
+        const cardWidth = card.offsetWidth;
+        const gap = 24; // 1.5rem
+        const moveAmount = currentIndex * (cardWidth + gap);
+        slider.style.transform = `translateX(-${moveAmount}px)`;
+    };
 
-        const cardWidth = cardElement.offsetWidth + 24; // width + gap
-        const maxScroll = slider.scrollWidth / 2;
+    function nextSlide() {
+        currentIndex = (currentIndex + 1) % totalSlides;
+        updateSlider();
+    }
 
-        if (slider.scrollLeft >= maxScroll - 10) {
-            slider.scrollLeft = 0; // Instant jump back to start
-        } else {
-            slider.scrollBy({ left: cardWidth, behavior: 'smooth' });
+    function prevSlide() {
+        currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+        updateSlider();
+    }
+
+    let autoScrollInterval = setInterval(nextSlide, 4000);
+
+    function resetAutoScroll() {
+        clearInterval(autoScrollInterval);
+        autoScrollInterval = setInterval(nextSlide, 4000);
+    }
+
+    // Touch Support
+    let startX = 0;
+    sliderContainer.addEventListener('touchstart', e => {
+        startX = e.touches[0].clientX;
+        clearInterval(autoScrollInterval);
+    });
+
+    sliderContainer.addEventListener('touchend', e => {
+        const endX = e.changedTouches[0].clientX;
+        const diff = startX - endX;
+        if (Math.abs(diff) > 30) {
+            if (diff > 0) nextSlide();
+            else prevSlide();
         }
-    }, 3000);
+        resetAutoScroll();
+    });
 
-    // Pause on interaction
-    slider.addEventListener('mousedown', () => isAutoScrolling = false);
-    slider.addEventListener('touchstart', () => isAutoScrolling = false);
+    // Interaction Support
+    slider.addEventListener('mouseenter', () => clearInterval(autoScrollInterval));
+    slider.addEventListener('mouseleave', () => resetAutoScroll());
 }
 

@@ -7,17 +7,61 @@
     <title>Bio Link</title>
     <meta name="description" content="My links and bio">
     <!-- Google Fonts -->
+    <!-- Google Fonts Resource Hints & Async Loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" as="style">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap"
+        media="print" onload="this.media='all'">
+
+    <link rel="preload"
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+        as="style">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+        media="print" onload="this.media='all'">
+
+    <!-- FontAwesome Async Loading -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        media="print" onload="this.media='all'">
+
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    </noscript>
     <!-- Styles -->
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
     <div class="background-animation"></div>
+
+    <div id="desktop-view">
+        <div class="desktop-content">
+            <p class="desktop-disclaimer">Sitio solo hecho para dispositivos móviles. Escanee el código QR para acceder
+                desde su móvil.</p>
+            <div class="qr-main">
+                <img src="./public/logo.png" alt="Logo" class="desktop-logo">
+                <div class="divider"></div>
+                <img src="./public/qr.png" alt="Scan me" class="desktop-qr">
+            </div>
+            <footer class="desktop-footer">
+                <div class="footer-item">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Diputada Laura Rodríguez 6551, Peñalolén</span>
+                </div>
+                <div class="footer-item">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    <span>+56 9 8915 8986</span>
+                </div>
+            </footer>
+        </div>
+    </div>
 
     <main class="container">
         <header class="profile-section">
@@ -36,7 +80,7 @@
             <!-- Gallery images will be injected here -->
         </section>
 
-        <section id="experience-container" class="experience-section">
+        <section id="experience-container" class="experience-section active">
             <!-- Experience content will be injected here -->
         </section>
 
@@ -47,7 +91,7 @@
 
     </main>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </body>
 
 </html>
