@@ -14,15 +14,15 @@
     "description": "Estilista profesional con más de 15 años de trayectoria trabajando en PALUMBO, especializada en colorimetría avanzada y tendencias internacionales. Mi compromiso es resaltar la belleza natural de cada cliente con técnicas innovadoras y productos de alta calidad.",
     "highlights": [
       {
-        "image": "./public/hair/1.jpeg",
+        "image": "./public/events/PRIME.jpg",
         "description": "20+ Años de Trayectoria Professional"
       },
       {
-        "image": "./public/hair/2.jpeg",
+        "image": "./public/events/COLOROMETRIA.jpg",
         "description": "Especialista en Colorimetría Avanzada"
       },
       {
-        "image": "./public/hair/3.jpeg",
+        "image": "./public/events/CADIVEU.jpg",
         "description": "Tendencias en Corte y Estilo"
       }
     ],
@@ -89,7 +89,7 @@
   "socials": [
     {
       "platform": "instagram",
-      "url": "#",
+      "url": "https://www.instagram.com/kissyestilista",
       "icon": "fa-brands fa-instagram"
     },
     {
